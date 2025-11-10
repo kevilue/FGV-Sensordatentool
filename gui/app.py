@@ -25,13 +25,55 @@ class MainApp(tk.Tk):
         # Main frame that holds the application content
         main_frame = ttk.Frame(self, padding="10")
         main_frame.grid(row=0, column=0, sticky="nsew", rowspan=3)
+        main_frame.grid_rowconfigure(0, weight=1) # Notebook will expand
         main_frame.grid_rowconfigure(1, weight=1) # Info text area will expand
         main_frame.grid_columnconfigure(0, weight=1)
 
-        # Settings
-        options_frame = ttk.LabelFrame(main_frame, text="Configuration", padding="10")
+        self.notebook = ttk.Notebook(main_frame)
+        self.notebook.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+
+        # Resample tab
+        self.resample_tab = ttk.Frame(self.notebook, padding=10)
+        self.notebook.add(self.resample_tab, text="Resample")
+        self.create_resample_tab()
+
+        # Concatenate tab
+        self.concatenate_tab = ttk.Frame(self.notebook, padding=10)
+        self.notebook.add(self.concatenate_tab, text="Concatenate Files")
+        self.create_concatenate_tab()
+
+        # Info log
+        info_frame = ttk.LabelFrame(main_frame, text="Info Log", padding="10")
+        info_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+        info_frame.grid_rowconfigure(0, weight=1)
+        info_frame.grid_columnconfigure(0, weight=1)
+
+        self.info_text = tk.Text(info_frame, height=10, state="disabled", wrap="word")
+        self.info_text.grid(row=0, column=0, sticky="nsew")
+        
+        scrollbar = ttk.Scrollbar(info_frame, orient="vertical", command=self.info_text.yview)
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        self.info_text['yscrollcommand'] = scrollbar.set
+
+        # Apply button
+        button_frame = ttk.Frame(main_frame, padding="10")
+        button_frame.grid(row=2, column=0, sticky="se")
+
+        self.apply_button = ttk.Button(button_frame, text="Apply", command=self.on_apply_button_click)
+        self.apply_button.pack()
+
+        # Set up process queue
+        self.process_queue = queue.Queue()
+        self.log_message("Welcome! Please configure the options and press 'Apply'.")
+
+    def create_resample_tab(self):
+        """Add content of the 'Resample' tab"""
+        options_frame = ttk.LabelFrame(self.resample_tab, text="Resampling Configuration", padding="10")
         options_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
         options_frame.grid_columnconfigure(1, weight=1) # Make entry widgets expand
+        
+        self.resample_tab.grid_rowconfigure(0, weight=1)
+        self.resample_tab.grid_columnconfigure(0, weight=1)
 
         # Folder Path
         ttk.Label(options_frame, text="Folder Path:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
@@ -92,29 +134,53 @@ class MainApp(tk.Tk):
         self.end_min_var = tk.IntVar(value=now.minute)
         ttk.Spinbox(end_frame, from_=0, to=59, wrap=True, textvariable=self.end_min_var, width=3).pack(side=tk.LEFT)
 
-        # Info log
-        info_frame = ttk.LabelFrame(main_frame, text="Info Log", padding="10")
-        info_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
-        info_frame.grid_rowconfigure(0, weight=1)
-        info_frame.grid_columnconfigure(0, weight=1)
+    def create_concatenate_tab(self):
+        """Populates the 'Concatenate Files' tab."""
+        self.concatenate_tab.grid_rowconfigure(0, weight=1)
+        self.concatenate_tab.grid_columnconfigure(0, weight=1)
 
-        self.info_text = tk.Text(info_frame, height=10, state="disabled", wrap="word")
-        self.info_text.grid(row=0, column=0, sticky="nsew")
+        # Frame for the listbox and scrollbar
+        list_frame = ttk.LabelFrame(self.concatenate_tab, text="Files to Concatenate", padding="10")
+        list_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        list_frame.grid_rowconfigure(0, weight=1)
+        list_frame.grid_columnconfigure(0, weight=1)
+
+        self.file_listbox = tk.Listbox(list_frame, selectmode=tk.EXTENDED, height=15)
+        self.file_listbox.grid(row=0, column=0, sticky="nsew")
+
+        list_scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=self.file_listbox.yview)
+        list_scrollbar.grid(row=0, column=1, sticky="ns")
+        self.file_listbox['yscrollcommand'] = list_scrollbar.set
+
+        # Frame for the buttons
+        button_frame = ttk.Frame(self.concatenate_tab)
+        button_frame.grid(row=1, column=0, sticky="ew", pady=5)
         
-        scrollbar = ttk.Scrollbar(info_frame, orient="vertical", command=self.info_text.yview)
-        scrollbar.grid(row=0, column=1, sticky="ns")
-        self.info_text['yscrollcommand'] = scrollbar.set
+        ttk.Button(button_frame, text="Add File(s)...", command=self.add_files).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="Remove Selected", command=self.remove_selected_files).pack(side=tk.LEFT, padx=5)
 
-        # Apply button
-        button_frame = ttk.Frame(main_frame, padding="10")
-        button_frame.grid(row=2, column=0, sticky="se") # Stick to South-East
+    def add_files(self):
+        """Opens dialog to add multiple files to the listbox."""
+        files = filedialog.askopenfilenames(title="Select files")
+        if files:
+            for f in files:
+                self.file_listbox.insert(tk.END, f)
+            self.selected_files = list(files)
+            self.log_message(f"Added {len(files)} file(s) to concatenate list.")
 
-        self.apply_button = ttk.Button(button_frame, text="Apply", command=self.start_processing_thread)
-        self.apply_button.pack()
+    def remove_selected_files(self):
+        """Removes selected files from the listbox."""
+        selected_indices = self.file_listbox.curselection()
+        if not selected_indices:
+            self.log_message("No files selected to remove.")
+            return
 
-        # Set up process queue
-        self.process_queue = queue.Queue()
-        self.log_message("Welcome! Please configure the options and press 'Apply'.")
+        # Delete from the bottom up to avoid index shifting issues
+        for i in reversed(selected_indices):
+            self.file_listbox.delete(i)
+            del self.selected_files[i]
+        
+        self.log_message(f"Removed {len(selected_indices)} file(s).")
 
     def log_message(self, message):
         """ Inserts a message into the info text box safely. """
@@ -162,6 +228,20 @@ class MainApp(tk.Tk):
         except Exception as e:
             messagebox.showerror("Date Error", f"Invalid date or time: {e}")
             return None, None
+        
+    def on_apply_button_click(self):
+        """
+        Checks which tab is active and calls the appropriate
+        processing function.
+        """
+        selected_tab_index = self.notebook.index(self.notebook.select())
+        
+        if selected_tab_index == 0:
+            # "Resample" tab is active
+            self.start_processing_thread()
+        elif selected_tab_index == 1:
+            # "Concatenate Files" tab is active
+            self.log_message(f"Files: {self.selected_files}")
 
     def start_processing_thread(self):
         """ Validates inputs and starts the background task in a new thread. """
@@ -214,9 +294,7 @@ class MainApp(tk.Tk):
             self.after(100, self.check_queue)
 
     def subprocess_routine(self, folder, rate, start, end):
-        """
-        Subprocess routine triggered by the gui.
-        """
+        """ Subprocess routine triggered by the gui. """
         try:
             self.process_queue.put(f"Starting subprocess for folder: {folder}")
             self.process_queue.put(f"Parameters: Rate={rate}, Start={start}, End={end}")
