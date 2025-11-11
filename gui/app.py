@@ -64,8 +64,9 @@ class MainApp(tk.Tk):
 
         # Set up process queue
         self.process_queue = queue.Queue()
+        self.data_processor = DataHandler(self.process_queue)
         self.log_message("Welcome! Please configure the options and press 'Apply'.")
-
+        
     def create_resample_tab(self):
         """Add content of the 'Resample' tab"""
         options_frame = ttk.LabelFrame(self.resample_tab, text="Resampling Configuration", padding="10")
@@ -76,11 +77,11 @@ class MainApp(tk.Tk):
         self.resample_tab.grid_columnconfigure(0, weight=1)
 
         # Folder Path
-        ttk.Label(options_frame, text="Folder Path:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
-        self.folder_path_var = tk.StringVar()
-        folder_entry = ttk.Entry(options_frame, textvariable=self.folder_path_var)
+        ttk.Label(options_frame, text="File Path:").grid(row=0, column=0, sticky="w", padx=5, pady=5)
+        self.file_path_var = tk.StringVar()
+        folder_entry = ttk.Entry(options_frame, textvariable=self.file_path_var)
         folder_entry.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
-        ttk.Button(options_frame, text="Browse...", command=self.browse_folder).grid(row=0, column=2, sticky="e", padx=5, pady=5)
+        ttk.Button(options_frame, text="Browse...", command=self.browse_file).grid(row=0, column=2, sticky="e", padx=5, pady=5)
 
         # Sample Rate
         ttk.Label(options_frame, text="Sample Rate:").grid(row=1, column=0, sticky="w", padx=5, pady=5)
@@ -161,12 +162,16 @@ class MainApp(tk.Tk):
 
     def add_files(self):
         """Opens dialog to add multiple files to the listbox."""
-        files = filedialog.askopenfilenames(title="Select files")
+        files = filedialog.askopenfilenames(title="Select files", filetypes=[("CSV Files", "*.csv")])
         if files:
+            excl_files = []
             for f in files:
-                self.file_listbox.insert(tk.END, f)
-            self.selected_files = list(files)
-            self.log_message(f"Added {len(files)} file(s) to concatenate list.")
+                if os.path.isfile(f):
+                    self.file_listbox.insert(tk.END, f)
+                else:
+                    excl_files.append(f)
+            self.selected_files = [f for f in files if f not in excl_files]
+            self.log_message(f"Added {len(self.selected_files)} file(s) to concatenate list.")
 
     def remove_selected_files(self):
         """Removes selected files from the listbox."""
@@ -177,8 +182,9 @@ class MainApp(tk.Tk):
 
         # Delete from the bottom up to avoid index shifting issues
         for i in reversed(selected_indices):
+            del_file = self.file_listbox.get(i)
             self.file_listbox.delete(i)
-            del self.selected_files[i]
+            self.selected_files.remove(del_file)
         
         self.log_message(f"Removed {len(selected_indices)} file(s).")
 
@@ -189,12 +195,16 @@ class MainApp(tk.Tk):
         self.info_text.configure(state="disabled")
         self.info_text.see(tk.END) # Auto-scroll to bottom
 
-    def browse_folder(self):
-        """ Opens a dialog to select a folder. """
-        path = filedialog.askdirectory()
+    def browse_file(self):
+        """ Opens a dialog to select a file. """
+        path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
         if path:
-            self.folder_path_var.set(path)
-            self.log_message(f"Folder selected: {path}")
+                self.file_path_var.set(path)
+                self.log_message(f"File selected: {path}")
+
+    def browse_save_as(self, initial_file=None):
+        path = filedialog.asksaveasfilename(filetypes=[("CSV Files", "*.csv")], initialfile=initial_file)
+        self.save_file_path = path
 
     def get_datetimes(self):
         """ Helper to get and validate datetime objects from pickers. """
@@ -238,41 +248,56 @@ class MainApp(tk.Tk):
         
         if selected_tab_index == 0:
             # "Resample" tab is active
-            self.start_processing_thread()
+            self.start_processing_thread(selected_tab_index)
         elif selected_tab_index == 1:
             # "Concatenate Files" tab is active
-            self.log_message(f"Files: {self.selected_files}")
+            self.browse_save_as(initial_file="concatenated_files.csv")
+            if self.save_file_path == "":
+                return
+            self.start_processing_thread(selected_tab_index)
 
-    def start_processing_thread(self):
+    def start_processing_thread(self, task):
         """ Validates inputs and starts the background task in a new thread. """
-        folder_path = self.folder_path_var.get()
-        if not folder_path or not os.path.isdir(folder_path):
-            messagebox.showerror("Validation Error", "Please select a valid folder path.")
-            return
+        if task == 0:
+            folder_path = self.file_path_var.get()
+            if not folder_path or not os.path.isdir(folder_path):
+                messagebox.showerror("Validation Error", "Please select a valid folder path.")
+                return
 
-        sample_rate = self.sample_rate_var.get()
-        if not sample_rate:
-            messagebox.showerror("Validation Error", "Please select a sample rate.")
-            return
+            sample_rate = self.sample_rate_var.get()
+            if not sample_rate:
+                messagebox.showerror("Validation Error", "Please select a sample rate.")
+                return
 
-        start_dt, end_dt = self.get_datetimes()
-        if start_dt is None or end_dt is None:
-            return # Validation failed in get_datetimes
+            start_dt, end_dt = self.get_datetimes()
+            if start_dt is None or end_dt is None:
+                return # Validation failed in get_datetimes
 
-        # All inputs are valid, start the thread
-        self.log_message("Starting processing...")
-        self.apply_button.configure(state="disabled")
-        
-        # Start the queue checker
-        self.check_queue()
-        
-        # Create and start the worker thread
-        self.worker_thread = threading.Thread(
-            target=self.subprocess_routine,
-            args=(folder_path, sample_rate, start_dt, end_dt),
-            daemon=True # Thread will exit when main app exits
-        )
-        self.worker_thread.start()
+            # All inputs are valid, start the thread
+            self.log_message("Starting processing...")
+            self.apply_button.configure(state="disabled")
+
+            # Start the queue checker
+            self.check_queue()
+
+            # Create and start the worker thread
+            self.worker_thread = threading.Thread(
+                target=self.subprocess_routine,
+                args=(folder_path, sample_rate, start_dt, end_dt),
+                daemon=True # Thread will exit when main app exits
+            )
+            self.worker_thread.start()
+        elif task == 1:
+            # File concatenation
+            save_file = self.save_file_path
+            self.log_message(f"Starting Process.")
+            self.check_queue()
+            self.concat_thread = threading.Thread(
+                target=self.start_concat_process,
+                args=(self.selected_files, save_file),
+                daemon=True
+            )            
+            self.concat_thread.start()
 
     def check_queue(self):
         """
@@ -299,9 +324,18 @@ class MainApp(tk.Tk):
             self.process_queue.put(f"Starting subprocess for folder: {folder}")
             self.process_queue.put(f"Parameters: Rate={rate}, Start={start}, End={end}")
             
-            handler = DataHandler(self.process_queue)
-            handler.simulate_process(2)
+            # handler = DataHandler(self.process_queue)
+            self.data_processor.simulate_process(2)
 
+        except Exception as e:
+            self.process_queue.put(f"FATAL THREAD ERROR: {e}")
+            self.process_queue.put("ERROR")
+
+    def start_concat_process(self, fpaths: list[str], savepath: str, time_format="%Y-%m-%d %H:%M:%S"):
+        try:
+            self.process_queue.put("Process started")
+
+            self.data_processor.concatenate_csv_files(fpaths, savepath, time_format)
         except Exception as e:
             self.process_queue.put(f"FATAL THREAD ERROR: {e}")
             self.process_queue.put("ERROR")
