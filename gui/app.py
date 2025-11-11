@@ -8,8 +8,10 @@ import os
 from tools.processing import DataHandler
 
 class MainApp(tk.Tk):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+
+        self.conf = config
 
         self.title("CSV Resampler for Water Temperatures")
         self.geometry("700x550")
@@ -64,7 +66,7 @@ class MainApp(tk.Tk):
 
         # Set up process queue
         self.process_queue = queue.Queue()
-        self.data_processor = DataHandler(self.process_queue)
+        self.data_processor = DataHandler(self.process_queue, self.conf)
         self.log_message("Welcome! Please configure the options and press 'Apply'.")
         
     def create_resample_tab(self):
@@ -86,13 +88,13 @@ class MainApp(tk.Tk):
         # Sample Rate
         ttk.Label(options_frame, text="Sample Rate:").grid(row=1, column=0, sticky="w", padx=5, pady=5)
         self.sample_rate_var = tk.StringVar()
-        sample_rate_options = ["max", "15min", "30min", "1h", "2h", "5h", "12h", "24h", "2d", "3d", "7d", "14d", "1m"]
+        sample_rate_options = ["10min", "30min", "1h", "2h", "5h", "12h", "24h", "2D", "3D", "7D", "14D", "1M"]
         sample_rate_dropdown = ttk.Combobox(options_frame, textvariable=self.sample_rate_var, values=sample_rate_options, state="readonly")
         sample_rate_dropdown.grid(row=1, column=1, sticky="w", padx=5, pady=5)
         sample_rate_dropdown.set("1h") # Default value
 
         # Date Pickers
-        self.min_date = datetime.date(2016, 1, 1)
+        self.min_date = datetime.date(2000, 1, 1)
         self.max_date = datetime.date.today()
         
         # Start Date/Time
@@ -123,7 +125,6 @@ class MainApp(tk.Tk):
                                          mindate=self.min_date, maxdate=self.max_date,
                                          date_pattern='dd.MM.yyyy')
         self.end_date_picker.pack(side=tk.LEFT, padx=5, pady=5)
-        
         # Set default end time to now
         now = datetime.datetime.now()
         self.end_date_picker.set_date(now.date())
@@ -134,6 +135,11 @@ class MainApp(tk.Tk):
         ttk.Label(end_frame, text=":").pack(side=tk.LEFT, padx=1)
         self.end_min_var = tk.IntVar(value=now.minute)
         ttk.Spinbox(end_frame, from_=0, to=59, wrap=True, textvariable=self.end_min_var, width=3).pack(side=tk.LEFT)
+
+        # Checkbox to pick resampling the whole file
+        self.resample_complete_file = tk.BooleanVar(value=False)
+        self.resample_completely_box = tk.Checkbutton(options_frame, text="Resample whole file", variable=self.resample_complete_file, onvalue=True, offvalue=False)
+        self.resample_completely_box.grid(row=4, column=0, columnspan=3, sticky="w", padx=5, pady=10)
 
     def create_concatenate_tab(self):
         """Populates the 'Concatenate Files' tab."""
@@ -218,7 +224,7 @@ class MainApp(tk.Tk):
             end_datetime = datetime.datetime.combine(end_date, end_time)
 
             # Validation
-            min_datetime = datetime.datetime(2016, 1, 1, 0, 0)
+            min_datetime = datetime.datetime(2000, 1, 1, 0, 0)
             max_datetime = datetime.datetime.now()
 
             if not (min_datetime <= start_datetime <= max_datetime):
@@ -259,8 +265,8 @@ class MainApp(tk.Tk):
     def start_processing_thread(self, task):
         """ Validates inputs and starts the background task in a new thread. """
         if task == 0:
-            folder_path = self.file_path_var.get()
-            if not folder_path or not os.path.isdir(folder_path):
+            file_path = self.file_path_var.get()
+            if not file_path or not os.path.isfile(file_path):
                 messagebox.showerror("Validation Error", "Please select a valid folder path.")
                 return
 
@@ -269,9 +275,12 @@ class MainApp(tk.Tk):
                 messagebox.showerror("Validation Error", "Please select a sample rate.")
                 return
 
-            start_dt, end_dt = self.get_datetimes()
-            if start_dt is None or end_dt is None:
-                return # Validation failed in get_datetimes
+            if not self.resample_complete_file.get():
+                start_dt, end_dt = self.get_datetimes()
+                if start_dt is None or end_dt is None:
+                    return # Validation failed in get_datetimes
+            else:
+                start_dt, end_dt = None, None
 
             # All inputs are valid, start the thread
             self.log_message("Starting processing...")
@@ -282,8 +291,8 @@ class MainApp(tk.Tk):
 
             # Create and start the worker thread
             self.worker_thread = threading.Thread(
-                target=self.subprocess_routine,
-                args=(folder_path, sample_rate, start_dt, end_dt),
+                target=self.start_resample_process,
+                args=(file_path, sample_rate, start_dt, end_dt),
                 daemon=True # Thread will exit when main app exits
             )
             self.worker_thread.start()
@@ -318,24 +327,28 @@ class MainApp(tk.Tk):
         except queue.Empty:
             self.after(100, self.check_queue)
 
-    def subprocess_routine(self, folder, rate, start, end):
+    def start_resample_process(self, file: str, rate: str, start, end):
         """ Subprocess routine triggered by the gui. """
         try:
-            self.process_queue.put(f"Starting subprocess for folder: {folder}")
-            self.process_queue.put(f"Parameters: Rate={rate}, Start={start}, End={end}")
+            self.process_queue.put(f"Starting resampling for file: {file}")
             
-            # handler = DataHandler(self.process_queue)
-            self.data_processor.simulate_process(2)
+            self.data_processor.resample_csv_file(
+                path=file,
+                savepath=f"{file.split(".")[-2]}_trimmed.csv",
+                sample_dist=rate,
+                start=start,
+                end=end
+            )
 
         except Exception as e:
-            self.process_queue.put(f"FATAL THREAD ERROR: {e}")
+            self.process_queue.put(f"An error occured: {e}")
             self.process_queue.put("ERROR")
 
-    def start_concat_process(self, fpaths: list[str], savepath: str, time_format="%Y-%m-%d %H:%M:%S"):
+    def start_concat_process(self, fpaths: list[str], savepath: str):
         try:
             self.process_queue.put("Process started")
 
-            self.data_processor.concatenate_csv_files(fpaths, savepath, time_format)
+            self.data_processor.concatenate_csv_files(fpaths, savepath)
         except Exception as e:
-            self.process_queue.put(f"FATAL THREAD ERROR: {e}")
+            self.process_queue.put(f"An error occured: {e}")
             self.process_queue.put("ERROR")
