@@ -1,0 +1,34 @@
+# Sensors
+
+[FGV_01]
+location = "Kurzach"
+
+[FGV_02]
+location = "Bottwar"
+
+[FGV_03]
+location = "Bottwar_1"
+
+[FGV_04]
+location = "Bottwar_2"
+
+[FGV_05]
+location = "Bottwar_3"
+
+[FGV_06]
+location = "Bottwar_4"
+
+[FGV_07]
+location = "Bottwar_5"
+
+[FGV_08]
+location = "Otterbach"
+
+[FGV_09]
+location = "Rohrbach"
+
+[FGV_10]
+location = "Murr"
+
+[FGV_11]
+location = "Murr_1"

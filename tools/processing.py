@@ -28,15 +28,16 @@ class DataHandler:
             try:
                 dfs.append(pd.read_csv(file))
             except Exception as e:
-                self.log(f"An error occured reading the file {file}:\n{e}")
+                self.log(f"An error occurred reading the file {file}:\n{e}")
 
         for df in dfs:
             df.dropna()
 
-        self.log("Combining and sorting...")
+        self.log("Combining...")
         combined = pd.concat(dfs)
         combined[self.__config.timestamp] = pd.to_datetime(combined[self.__config.timestamp], format=self.__config.time_format)
         if self.__config.is_sorting_active: 
+            self.log("Sorting...")
             combined.sort_values(by=self.__config.timestamp, ascending=self.__config.sort_ascending_active, inplace=True)
 
         combined.to_csv(savepath, index=False)
