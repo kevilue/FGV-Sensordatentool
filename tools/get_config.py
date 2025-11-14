@@ -3,10 +3,12 @@ import tomllib
 class AppConfig:
     __config = dict()
 
-    def __init__(self, path):
+    def __init__(self, config_path, sensors_path):
         try:
-            with open(path, "rb") as f:
+            with open(config_path, "rb") as f:
                 self.__config = tomllib.load(f)
+            with open(sensors_path, "rb") as f:
+                self.__config["sensors"] = tomllib.load(f)
         except Exception as e:
             print("Error loading config file:", e)
 
@@ -51,3 +53,8 @@ class AppConfig:
             if self.__config["sorting"]["order"] == "ascending": return True
             else: return False
         return False
+    
+    @property
+    def sensors(self):
+        if self.__config["sensors"]:
+            return self.__config["sensors"]
