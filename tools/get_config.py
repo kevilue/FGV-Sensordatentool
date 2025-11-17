@@ -8,9 +8,19 @@ class AppConfig:
             with open(config_path, "rb") as f:
                 self.__config = tomllib.load(f)
             with open(sensors_path, "rb") as f:
-                self.__config["sensors"] = tomllib.load(f)
+                self.__sensors = tomllib.load(f)
         except Exception as e:
             print("Error loading config file:", e)
+
+
+    @property
+    def sensors(self):
+        if self.__sensors:
+            return self.__sensors.keys()
+        
+    def sensor_loc(self, sensor):
+        if self.__sensors:
+            return self.__sensors[sensor]["location"]
 
     @property
     def timestamp(self):
@@ -54,7 +64,3 @@ class AppConfig:
             else: return False
         return False
     
-    @property
-    def sensors(self):
-        if self.__config["sensors"]:
-            return self.__config["sensors"]
