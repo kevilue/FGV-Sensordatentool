@@ -1,9 +1,16 @@
 import tomllib
+import os
+import sys
 
 class AppConfig:
     __config = dict()
 
     def __init__(self, config_path, sensors_path):
+        if not os.path.isfile(config_path):
+            print("No config found, proceeding with default settings")
+        if not os.path.isfile(sensors_path):
+            print("No sensors config found - aborting.")
+            sys.exit(1)
         try:
             with open(config_path, "rb") as f:
                 self.__config = tomllib.load(f)

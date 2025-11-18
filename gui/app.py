@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
-# from tkcalendar import DateEntry
 import datetime
 import threading
 import queue
@@ -15,8 +14,16 @@ class MainApp(tk.Tk):
 
         self.title("CSV Resampler for Water Temperatures")
         self.geometry("700x550")
-        icon = tk.PhotoImage(file="gui/icon.png")
-        self.iconphoto(True, icon)
+        try:
+            icon = tk.PhotoImage(file="gui/icon.png")
+            self.iconphoto(True, icon)
+        except Exception as e:
+            print("Couldn't open gui/icon.png, using icon.png")
+            try: 
+                icon = tk.PhotoImage(file="icon.png")
+                self.iconphoto(True, icon)
+            except Exception as e:
+                print("Couldn't open icon.png, proceeding without icon")
 
         self.selected_files = []
         
@@ -184,10 +191,10 @@ class MainApp(tk.Tk):
             else:
                 # All inputs are valid
                 self.apply_button.configure(state="disabled")
-    
+
                 # Start the queue checker
                 self.check_queue()
-    
+
                 # Create and start the worker thread
                 self.get_latest_thread = threading.Thread(
                     target=self.start_file_reading,
