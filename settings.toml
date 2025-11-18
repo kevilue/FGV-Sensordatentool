@@ -1,15 +1,14 @@
 # Names of columns in the csv files.
-# It is searched for these names, the rest is omitted.
+# These only have to be present in the column name, not match it exactly.
 [names]
-timestamp_column = "Date-Time" # This column will be used for sorting and resampling (oder nur CEST -> muss Date-Time beinhalten)
+timestamp_column = "Date-Time" # This column will be used for sorting
 index_column = "#"
 temperature_column = "Temperature"
 
 # Format of the timestamp in the csv data
 [formats]
-time_format = "%m/%d/%Y %H:%M:%S" # see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+time_format = "%Y-%m-%d %H:%M:%S" # see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
 
 # Sorting settings
 [sorting]
-enable = true
 order = "descending" # or "ascending", default is "descending"

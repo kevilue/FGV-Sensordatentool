@@ -51,13 +51,6 @@ class AppConfig:
             return "%Y-%m-%d %H:%M:%S"
         
     @property
-    def is_sorting_active(self):
-        if self.__config["sorting"]["enable"]:
-            return True
-        else:
-            return False
-        
-    @property
     def sort_ascending_active(self):
         if self.__config["sorting"]["order"]:
             if self.__config["sorting"]["order"] == "ascending": return True

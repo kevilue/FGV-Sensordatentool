@@ -44,7 +44,7 @@ class MainApp(tk.Tk):
         folder_entry.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
         ttk.Button(options_frame, text="Durchsuchen...", command=self.browse_lib_file).grid(row=0, column=2, sticky="e", padx=5, pady=5)
 
-        # new code
+        # New files
         ttk.Label(options_frame, text="Neue Dateien:").grid(row=1, column=0, sticky="nw", padx=5, pady=5)
 
         # Frame for Listbox + Scrollbar
@@ -66,6 +66,15 @@ class MainApp(tk.Tk):
 
         ttk.Button(button_list_frame, text="Hinzufügen...", command=self.add_files).grid(row=0, column=0, sticky="ew", pady=2)
         ttk.Button(button_list_frame, text="Entfernen", command=self.remove_selected_files).grid(row=1, column=0, sticky="ew", pady=2)
+
+        # Checkbox for sorting
+        self.sort_active = tk.BooleanVar(value=False)
+        self.sort_active_box = tk.Checkbutton(options_frame, text="Daten sortieren (optional)", variable=self.sort_active, onvalue=True, offvalue=False)
+        self.sort_active_box.grid(row=4, column=0, columnspan=3, sticky="w", padx=5, pady=2)
+        # Checkbox for deleting duplicate rows
+        self.rm_duplicates_active = tk.BooleanVar(value=True)
+        self.rm_duplicates_active_box = tk.Checkbutton(options_frame, text="Doppelte Daten entfernen (optional)", variable=self.rm_duplicates_active, onvalue=True, offvalue=False)
+        self.rm_duplicates_active_box.grid(row=5, column=0, columnspan=3, sticky="w", padx=5, pady=2)
 
         # Info log
         info_frame = ttk.LabelFrame(main_frame, text="Info Log", padding="10")
@@ -138,16 +147,21 @@ class MainApp(tk.Tk):
                 self.selected_files.remove(file_path)
                 
         self.log_message(f"Removed {len(selected_indices)} file(s). Total remaining: {len(self.selected_files)}")
+
+    def clear_inputs(self):
+        self.file_listbox.delete(0, tk.END)
+        self.selected_files = []
+        self.file_path_var.set("")
         
     def on_apply_button_click(self):
-        """
-        Checks which tab is active and calls the appropriate
-        processing function.
-        """
+        """ Apply file concatenation with chosen settings. """
 
         if not self.selected_files or len(self.selected_files) < 1:
-            messagebox.showerror("Validation Error", "Please add at least one file to concatenate.")
-            return
+            basepath = self.file_path_var.get()
+            if basepath == "" or basepath is None:
+                messagebox.showerror("Error", "No files selected. Please select files to work with.")
+                return
+            else: messagebox.showinfo("No new files selected", "The selected settings will be applied to the selected file.")
         
         initial_name = "all_data.csv"
         path = self.browse_save_as(initial_name)
@@ -167,37 +181,48 @@ class MainApp(tk.Tk):
             if not file_path or not os.path.isfile(file_path):
                 messagebox.showerror("Validation Error", "Please select a valid file path.")
                 return
-
-            # All inputs are valid
-            self.apply_button.configure(state="disabled")
-
-            # Start the queue checker
-            self.check_queue()
-
-            # Create and start the worker thread
-            self.worker_thread = threading.Thread(
-                target=self.start_file_reading,
-                args=(file_path,),
-                daemon=True # Thread will exit when main app exits
-            )
-            self.worker_thread.start()
+            else:
+                # All inputs are valid
+                self.apply_button.configure(state="disabled")
+    
+                # Start the queue checker
+                self.check_queue()
+    
+                # Create and start the worker thread
+                self.get_latest_thread = threading.Thread(
+                    target=self.start_file_reading,
+                    args=(file_path,),
+                    daemon=True # Thread will exit when main app exits
+                )
+                self.get_latest_thread.start()
 
         elif task == 1:
             # File concatenation
             save_file = self.save_file_path
             old_file_path = self.file_path_var.get()
+            sort = self.sort_active.get()
+            drop_duplicates = self.rm_duplicates_active.get()
             if not old_file_path:
                 self.log_message("Proceeding without existing data library")
                 old_file_path = None
             elif not os.path.isfile(old_file_path):
                 messagebox.showerror("File Error", f"{old_file_path} is not a file. Please pick a valid existing data library.")
+                return
+            
+            if not self.selected_files or len(self.selected_files) < 1:
+                if old_file_path is not None:
+                    fpaths = None
+                else:
+                    messagebox.showerror("No files selected", "No base and no files selected. Please select someting.")
+                    return
+            else: fpaths = self.selected_files
             self.log_message(f"Starting Process.")
             self.check_queue()
             self.concat_thread = threading.Thread(
                 target=self.start_concat_process,
-                args=(self.selected_files, save_file, old_file_path),
+                args=(fpaths, save_file, old_file_path, sort, drop_duplicates),
                 daemon=True
-            )            
+            )
             self.concat_thread.start()
 
     def check_queue(self):
@@ -209,6 +234,10 @@ class MainApp(tk.Tk):
             message = self.process_queue.get_nowait()
             if message == "COMPLETED":
                 self.log_message("Processing finished successfully.")
+                self.apply_button.configure(state="normal")
+            elif message == "CONCAT_COMPLETED":
+                self.log_message("Processing finished successfully.")
+                self.clear_inputs()
                 self.apply_button.configure(state="normal")
             elif message == "ERROR":
                 self.log_message("An error occurred during processing.")
@@ -233,10 +262,10 @@ class MainApp(tk.Tk):
             self.process_queue.put(f"An error occured: {e}")
             self.process_queue.put("ERROR")
 
-    def start_concat_process(self, fpaths: list[str], savepath: str, oldfile=None):
+    def start_concat_process(self, fpaths: list[str] | None, savepath: str, oldfile=None, sort=True, drop_duplicates=True):
         try:
             self.process_queue.put("Process started")
-            self.data_processor.append_sensor_files(fpaths, savepath, oldfile)
+            self.data_processor.append_sensor_files(fpaths, savepath, oldfile, sort, drop_duplicates)
         except Exception as e:
             self.process_queue.put(f"An error occured: {e}")
             self.process_queue.put("ERROR")
