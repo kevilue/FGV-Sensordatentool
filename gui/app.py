@@ -15,10 +15,10 @@ class MainApp(tk.Tk):
         self.title("CSV Editor für Temperatursensoren")
         self.geometry("700x550")
         try:
-            icon = tk.PhotoImage(file="gui/icon.png")
-            self.iconphoto(True, icon)
+            ipath = config.get_resource_path("icon.ico")
+            self.iconbitmap(ipath)
         except Exception as e:
-            print("gui/icon.png konnte nicht gefunden werden, verwende icon.png")
+            print(f"icon.ico konnte nicht gefunden werden {e}, verwende icon.png")
             try: 
                 icon = tk.PhotoImage(file="icon.png")
                 self.iconphoto(True, icon)

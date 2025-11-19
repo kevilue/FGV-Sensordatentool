@@ -64,3 +64,11 @@ class AppConfig:
             else: return False
         return False
     
+    def get_resource_path(self, relative_path):
+        """ Get resource path for pyinstaller. """
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
