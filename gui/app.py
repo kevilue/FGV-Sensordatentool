@@ -12,18 +12,18 @@ class MainApp(tk.Tk):
 
         self.conf = config
 
-        self.title("CSV Resampler for Water Temperatures")
+        self.title("CSV Editor für Temperatursensoren")
         self.geometry("700x550")
         try:
             icon = tk.PhotoImage(file="gui/icon.png")
             self.iconphoto(True, icon)
         except Exception as e:
-            print("Couldn't open gui/icon.png, using icon.png")
+            print("gui/icon.png konnte nicht gefunden werden, verwende icon.png")
             try: 
                 icon = tk.PhotoImage(file="icon.png")
                 self.iconphoto(True, icon)
             except Exception as e:
-                print("Couldn't open icon.png, proceeding without icon")
+                print("icon.png konnte nicht gefunden werden, fahre ohne icon fort")
 
         self.selected_files = []
         
@@ -49,7 +49,7 @@ class MainApp(tk.Tk):
         self.file_path_var = tk.StringVar()
         folder_entry = ttk.Entry(options_frame, textvariable=self.file_path_var)
         folder_entry.grid(row=0, column=1, sticky="ew", padx=5, pady=5)
-        ttk.Button(options_frame, text="Durchsuchen...", command=self.browse_lib_file).grid(row=0, column=2, sticky="e", padx=5, pady=5)
+        ttk.Button(options_frame, text="Durchsuchen", command=self.browse_lib_file).grid(row=0, column=2, sticky="e", padx=5, pady=5)
 
         # New files
         ttk.Label(options_frame, text="Neue Dateien:").grid(row=1, column=0, sticky="nw", padx=5, pady=5)
@@ -71,7 +71,7 @@ class MainApp(tk.Tk):
         button_list_frame = ttk.Frame(options_frame)
         button_list_frame.grid(row=1, column=2, sticky="n", padx=5, pady=5)
 
-        ttk.Button(button_list_frame, text="Hinzufügen...", command=self.add_files).grid(row=0, column=0, sticky="ew", pady=2)
+        ttk.Button(button_list_frame, text="Hinzufügen", command=self.add_files).grid(row=0, column=0, sticky="ew", pady=2)
         ttk.Button(button_list_frame, text="Entfernen", command=self.remove_selected_files).grid(row=1, column=0, sticky="ew", pady=2)
 
         # Checkbox for sorting
@@ -100,13 +100,13 @@ class MainApp(tk.Tk):
         button_frame = ttk.Frame(main_frame, padding="10")
         button_frame.grid(row=2, column=0, sticky="se")
 
-        self.apply_button = ttk.Button(button_frame, text="Apply", command=self.on_apply_button_click)
+        self.apply_button = ttk.Button(button_frame, text="Anwenden", command=self.on_apply_button_click)
         self.apply_button.pack()
 
         # Set up process queue
         self.process_queue = queue.Queue()
         self.data_processor = DataHandler(self.process_queue, self.conf)
-        self.log_message("Welcome! Please configure the options and press 'Apply'.")
+        self.log_message("Bitte nehmen Sie Einstellungen vor und drücken Sie 'Anwenden'.")
         
     def log_message(self, message):
         """ Inserts a message into the info text box safely. """
@@ -120,16 +120,16 @@ class MainApp(tk.Tk):
         path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
         if path:
                 self.file_path_var.set(path)
-                self.log_message(f"File selected: {path}")
+                self.log_message(f"Datei ausgewählt: {path}")
                 self.start_processing_thread(0)
 
     def browse_save_as(self, initial_file=None):
-        path = filedialog.asksaveasfilename(filetypes=[("CSV Files", "*.csv")], initialfile=initial_file)
+        path = filedialog.asksaveasfilename(filetypes=[("CSV Dateien", "*.csv")], initialfile=initial_file)
         return path
 
     def add_files(self):
         """ Opens a dialog to select multiple files and adds them to the list. """
-        paths = filedialog.askopenfilenames(filetypes=[("Excel Files", "*.xlsx")])
+        paths = filedialog.askopenfilenames(filetypes=[("Excel Dateien", "*.xlsx")])
         if paths:
             count_added = 0
             for path in paths:
@@ -137,13 +137,13 @@ class MainApp(tk.Tk):
                     self.selected_files.append(path)
                     self.file_listbox.insert(tk.END, path) # Add full path to listbox
                     count_added += 1
-            self.log_message(f"Selected {count_added} new file(s). Total: {len(self.selected_files)}")
+            self.log_message(f"{count_added} Datei(en) hinzugefügt. Insgesamt: {len(self.selected_files)}")
             
     def remove_selected_files(self):
         """ Removes the selected file(s) from the listbox and the internal list. """
         selected_indices = self.file_listbox.curselection()
         if not selected_indices:
-            self.log_message("No file selected to remove.")
+            self.log_message("Keine Datei zum Entfernen ausgewählt.")
             return
 
         # Iterate in reverse order to avoid index shifting issues
@@ -153,7 +153,7 @@ class MainApp(tk.Tk):
             if file_path in self.selected_files:
                 self.selected_files.remove(file_path)
                 
-        self.log_message(f"Removed {len(selected_indices)} file(s). Total remaining: {len(self.selected_files)}")
+        self.log_message(f"{len(selected_indices)} Datei(en) entfernt. Übrig: {len(self.selected_files)}")
 
     def clear_inputs(self):
         self.file_listbox.delete(0, tk.END)
@@ -166,19 +166,19 @@ class MainApp(tk.Tk):
         if not self.selected_files or len(self.selected_files) < 1:
             basepath = self.file_path_var.get()
             if basepath == "" or basepath is None:
-                messagebox.showerror("Error", "No files selected. Please select files to work with.")
+                messagebox.showerror("Fehler", "Keine Dateien ausgewählt. Bitte wählen Sie Dateien zum Bearbeiten aus.")
                 return
-            else: messagebox.showinfo("No new files selected", "The selected settings will be applied to the selected file.")
+            else: messagebox.showinfo("Keine neuen Dateien", "Die Einstellungen werden auf die gewählte Bibliothek angewendet.")
         
         initial_name = "all_data.csv"
         path = self.browse_save_as(initial_name)
         
         if not path:
-            self.log_message("Save operation cancelled.")
+            self.log_message("Speichern abgebrochen.")
             return
             
         self.save_file_path = path
-        self.log_message(f"Saving concatenated file to: {path}")
+        self.log_message(f"Die Datei wird gespeichert unter: {path}")
         self.start_processing_thread(1)
 
     def start_processing_thread(self, task):
@@ -186,7 +186,7 @@ class MainApp(tk.Tk):
         if task == 0:
             file_path = self.file_path_var.get()
             if not file_path or not os.path.isfile(file_path):
-                messagebox.showerror("Validation Error", "Please select a valid file path.")
+                messagebox.showerror("Datei nicht existent", "Bitte wählen Sie eine existierende Datei.")
                 return
             else:
                 # All inputs are valid
@@ -210,20 +210,20 @@ class MainApp(tk.Tk):
             sort = self.sort_active.get()
             drop_duplicates = self.rm_duplicates_active.get()
             if not old_file_path:
-                self.log_message("Proceeding without existing data library")
+                self.log_message("Fahre ohne bestehende Bibliothek fort")
                 old_file_path = None
             elif not os.path.isfile(old_file_path):
-                messagebox.showerror("File Error", f"{old_file_path} is not a file. Please pick a valid existing data library.")
+                messagebox.showerror("Fehler", f"{old_file_path} ist keine gültige Datei. Bitte wählen Sie eine existierende, gültige Bibliothek.")
                 return
             
             if not self.selected_files or len(self.selected_files) < 1:
                 if old_file_path is not None:
                     fpaths = None
                 else:
-                    messagebox.showerror("No files selected", "No base and no files selected. Please select someting.")
+                    messagebox.showerror("Fehler", "Keine Dateien ausgewählt. Bitte wählen Sie Dateien zum Bearbeiten aus.")
                     return
             else: fpaths = self.selected_files
-            self.log_message(f"Starting Process.")
+            self.log_message(f"Starte Prozess.")
             self.check_queue()
             self.concat_thread = threading.Thread(
                 target=self.start_concat_process,
@@ -240,14 +240,14 @@ class MainApp(tk.Tk):
         try:
             message = self.process_queue.get_nowait()
             if message == "COMPLETED":
-                self.log_message("Processing finished successfully.")
+                self.log_message("Prozess erfolgreich beendet.")
                 self.apply_button.configure(state="normal")
             elif message == "CONCAT_COMPLETED":
-                self.log_message("Processing finished successfully.")
+                self.log_message("Prozess erfolgreich beendet.")
                 self.clear_inputs()
                 self.apply_button.configure(state="normal")
             elif message == "ERROR":
-                self.log_message("An error occurred during processing.")
+                self.log_message("Während dem Prozess ist ein Fehler aufgetreten.")
                 self.apply_button.configure(state="normal")
             else:
                 self.log_message(message)
@@ -258,21 +258,21 @@ class MainApp(tk.Tk):
     def start_file_reading(self, file: str):
         """ Subprocess routine triggered by the gui. """
         try:
-            self.process_queue.put(f"Starting reading file: {file}")
+            self.process_queue.put(f"Lesen starten: {file}")
 
             res = self.data_processor.get_newest_sensor_entries(file)
             for r in res:
-                self.log_message(f"Sensor: {r["name"]}, latest entry: {r["latest"]}")  
+                self.log_message(f"Sensor: {r["name"]}, letzter Eintrag: {r["latest"]}")  
             self.process_queue.put("COMPLETED")
 
         except Exception as e:
-            self.process_queue.put(f"An error occured: {e}")
+            self.process_queue.put(f"Es ist ein Fehler aufgetreten: {e}")
             self.process_queue.put("ERROR")
 
     def start_concat_process(self, fpaths: list[str] | None, savepath: str, oldfile=None, sort=True, drop_duplicates=True):
         try:
-            self.process_queue.put("Process started")
+            self.process_queue.put("Prozess gestartet")
             self.data_processor.append_sensor_files(fpaths, savepath, oldfile, sort, drop_duplicates)
         except Exception as e:
-            self.process_queue.put(f"An error occured: {e}")
+            self.process_queue.put(f"Es ist ein Fehler aufgetreten: {e}")
             self.process_queue.put("ERROR")

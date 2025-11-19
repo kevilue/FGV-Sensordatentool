@@ -29,19 +29,19 @@ class DataHandler:
             data_paths = path_to_files
         else:
             data_paths = glob.glob(path_to_files+"\\FGV_*.xlsx", recursive=True)
-            self.log("Found", len(data_paths), "files")
+            self.log(f"{len(data_paths)} Datei(en) gefunden")
 
         sensors_chunks = {}
         
         for file in data_paths:
             try: sensor_name = re.search(r"FGV_\d+", file).group()
             except Exception as e:
-                self.log(f"An error occurred while reading the filename {file}: {e}. Please make sure all files begin with 'FGV_[sensorid]'.")
+                self.log(f"Fehler beim Lesen von {file}: {e}. Stellen Sie sicher, dass alle Dateien der neuen Sensordaten mit 'FGV_[sensorid]' beginnen.")
             if sensor_name not in sensors_chunks.keys():
                 sensors_chunks[sensor_name] = []
             if not sensor_name in self.__config.sensors:
-                raise(NameError(f"Trying to read sensor {sensor_name} which is not defined in sensors.toml"))
-            else: self.log(f"Reading data for sensor {sensor_name}")
+                raise(NameError(f"Versuche Sensor {sensor_name} zu lesen der nicht in sensors.toml definiert wurde. Bitte fügen Sie den neuen Sensor hinzu."))
+            else: self.log(f"Lese Daten für Sensor {sensor_name}")
             df = pd.read_excel(file)
 
             idxcol, timecol, tmpcol = None, None, None
@@ -52,7 +52,7 @@ class DataHandler:
                     timecol = col
                 elif self.__config.temperature in col:
                     tmpcol = col
-                else: raise(IndexError(f"Found unknown column: {col}"))
+                else: raise(IndexError(f"Nicht bekannte Spalte in Daten gefunden: {col}"))
 
             if sort and save_path is not None:
                 df[timecol] = pd.to_datetime(df[timecol], format=self.__config.time_format)
@@ -62,7 +62,7 @@ class DataHandler:
             df = self.__transformSensorFile({"df": df, "idxcol": idxcol, "timecol": timecol, "tmpcol": tmpcol}, sensor_name, datetime_col=True)["df"]
             sensors_chunks[sensor_name].append(df)
 
-        if save_path is not None: self.log("Combining...")
+        if save_path is not None: self.log("Kombiniere...")
 
         # Use topmost entry
         searchfunc = lambda x: x["Datum"].iloc[0]
@@ -77,7 +77,7 @@ class DataHandler:
         all_sensors_chunks = pd.concat(all_sensors_chunks)
 
         if save_path is not None:
-            self.log("Done. Saving...")
+            self.log("Fertig. Speichern...")
             with open(save_path, "w") as f:
                 all_sensors_chunks.to_csv(f, index=False)
 
@@ -94,30 +94,30 @@ class DataHandler:
         """Concatenate an existing file (old_file, optional) with new ones and save under save_path."""
         stime = time.perf_counter()
         if old_file is not None:
-            self.log("Reading old file...")
+            self.log("Lese existierende Bibliothek...")
             base = pd.read_csv(old_file)
             if path_to_files is not None:
-                self.log(f"Done ({time.perf_counter()-stime:.2f}s). Concatenating new files...")
+                self.log(f"Fertig ({time.perf_counter()-stime:.2f}s). Kombiniere neue Dateien...")
                 new = self.concat_sensor_files(path_to_files=path_to_files)
-                self.log(f"Done ({time.perf_counter()-stime:.2f}s). Combining...")
+                self.log(f"Fertig ({time.perf_counter()-stime:.2f}s). Kombiniere...")
                 base = pd.concat([new, base])
             if drop_duplicates:
-                self.log("Dropping duplicates..")
+                self.log("Eliminiere Duplikate...")
                 base.dropna(inplace=True)
                 base.drop_duplicates(inplace=True)
             if sort:
-                self.log("Sorting...")
+                self.log("Sortiere...")
                 base["Datum"] = pd.to_datetime(base["Datum"], format=self.__config.time_format)
                 base_sorted = base.sort_values(by=["Sensor", "Datum"], ascending=[True, self.__config.sort_ascending_active])
                 base = base_sorted
-            self.log(f"Done ({time.perf_counter()-stime:.2f}s). Saving...")
+            self.log(f"Fertig ({time.perf_counter()-stime:.2f}s). Speichern...")
             with open(save_path, "w") as f:
                 base.to_csv(f, index=False)
         else: 
-            self.log("Concatenating files...")
+            self.log("Kombiniere Dateien...")
             self.concat_sensor_files(path_to_files=path_to_files, save_path=save_path, sort=sort, drop_duplicates=drop_duplicates)
 
-        self.log(f"Done processing files, took {time.perf_counter()-stime:.2f}s")
+        self.log(f"Verarbeitung fertig. Dauer: {time.perf_counter()-stime:.2f}s")
         self.log("CONCAT_COMPLETED")
 
     def __transformSensorFile(self, df_dict: dict, sensor_name: str, datetime_col=False):
@@ -141,7 +141,7 @@ class DataHandler:
             df = pd.read_csv(f)
 
         sensors = df["Sensor"].unique()
-        self.log(f"Found {len(sensors)} sensor(s) in file")
+        self.log(f"{len(sensors)} Sensor(en) in der Datei gefunden")
 
         results = []
         for sensor in sensors:
