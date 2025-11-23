@@ -2,9 +2,10 @@ import pandas as pd
 import time
 import glob
 import re
+from tools.get_config import AppConfig
 
 class DataHandler:
-    def __init__(self, log_queue, config):
+    def __init__(self, log_queue, config: AppConfig):
         self.log_queue = log_queue
         self.__config = config
 
@@ -28,13 +29,13 @@ class DataHandler:
         if type(path_to_files) is list: 
             data_paths = path_to_files
         else:
-            data_paths = glob.glob(path_to_files+"\\FGV_*.xlsx", recursive=True)
+            data_paths = glob.glob(path_to_files+self.__config.file_search_pattern, recursive=True)
             self.log(f"{len(data_paths)} Datei(en) gefunden")
 
         sensors_chunks = {}
         
         for file in data_paths:
-            try: sensor_name = re.search(r"FGV_\d+", file).group()
+            try: sensor_name = re.search(self.__config.sensor_name_pattern, file).group()
             except Exception as e:
                 self.log(f"Fehler beim Lesen von {file}: {e}. Stellen Sie sicher, dass alle Dateien der neuen Sensordaten mit 'FGV_[sensorid]' beginnen.")
             if sensor_name not in sensors_chunks.keys():

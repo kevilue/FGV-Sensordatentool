@@ -4,10 +4,13 @@
 timestamp_column = "Date-Time" # This column will be used for sorting
 index_column = "#"
 temperature_column = "Temperature"
+sensor_filename_pattern = "FGV_*.xlsx"
+sensor_name_pattern = 'FGV_\d+'
 
 # Format of the timestamp in the csv data
 [formats]
 time_format = "%Y-%m-%d %H:%M:%S" # see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+
 
 # Sorting settings
 [sorting]

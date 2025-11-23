@@ -25,46 +25,60 @@ class AppConfig:
         if self.__sensors:
             return self.__sensors.keys()
         
-    def sensor_loc(self, sensor):
+    def sensor_loc(self, sensor) -> str:
         if self.__sensors:
             return self.__sensors[sensor]["location"]
 
     @property
-    def timestamp(self):
+    def timestamp(self) -> str:
         if self.__config["names"]["timestamp_column"]:
             return self.__config["names"]["timestamp_column"]
         else:
             return "timestamp"
         
     @property
-    def index(self):
+    def index(self) -> str:
         if self.__config["names"]["index_column"]:
             return self.__config["names"]["index_column"]
         else:
             return "index"
         
     @property
-    def temperature(self):
+    def temperature(self) -> str:
         if self.__config["names"]["temperature_column"]:
             return self.__config["names"]["temperature_column"]
         else:
             return "temperature"
         
     @property
-    def time_format(self):
+    def time_format(self) -> str:
         if self.__config["formats"]["time_format"]:
             return self.__config["formats"]["time_format"]
         else:
             return "%Y-%m-%d %H:%M:%S"
         
     @property
-    def sort_ascending_active(self):
+    def sort_ascending_active(self) -> bool:
         if self.__config["sorting"]["order"]:
             if self.__config["sorting"]["order"] == "ascending": return True
             else: return False
         return False
     
-    def get_resource_path(self, relative_path):
+    @property
+    def file_search_pattern(self) -> str:
+        if self.__config["names"]["sensor_filename_pattern"]:
+            return self.__config["names"]["sensor_filename_pattern"]
+        else: 
+            return "FGV_*.xlsx"
+    
+    @property
+    def sensor_name_pattern(self) -> str:
+        if self.__config["names"]["sensor_name_pattern"]:
+            return self.__config["names"]["sensor_name_pattern"]
+        else: 
+            return r"FGV_\d+"
+
+    def get_resource_path(self, relative_path) -> str:
         """ Get resource path for pyinstaller. """
         try:
             base_path = sys._MEIPASS
