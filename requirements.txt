@@ -1,4 +1,2 @@
 pandas
-ipykernel
-tkcalendar
 openpyxl
