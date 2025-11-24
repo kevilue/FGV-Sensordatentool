@@ -1,41 +1,36 @@
-### Language
-[![de](https://img.shields.io/badge/lang-de-red.svg)](./README.de.md)
-[![en](https://img.shields.io/badge/lang-en-blue.svg)](./README.md)
+### Sprache
 
-# Purpose
+[![en](https://img.shields.io/badge/lang-en-blue.svg)](./README.en.md)
+[![de](https://img.shields.io/badge/lang-de-red.svg)](./README.md)
 
-This tool is used by the [Fischerei- und Gewässerschutzverein Steinheim e.V.](https://fgv-steinheim.de/fgv/) (FGV) to combine the data of water temperature sensors for a combined visualization in Microsoft Power BI.
+# Nutzen
 
-This program can be used to concatenate excel files containing the data collected from temperature sensors. The purpose of this project specifically is to use the data of temperature sensors, which are placed in different positions of water bodies for tracking purposes.
+Dieses Tool wird vom [Fischerei- und Gewässerschutzverein Steinheim e.V.](https://fgv-steinheim.de/fgv/) (FGV) genutzt, um die Daten von Wassertemperatursensoren zusammengeführt in Microsoft PowerBI visualisieren zu können.
 
-# Installing
+# Installation
 
 > [!WARNING]
-> The .toml files must be located in the same folder as the .exe file for the application to function correctly.
+> Die .toml-Dateien müssen sich im selben Ordner wie die .exe Datei befinden, damit die Anwendung korrekt funktioniert.
 
 ## zip
-Download the .zip file from the releases, extract it, and start the .exe.
+Die .zip-Datei von den Releases herunterladen, extrahieren und die .exe starten.
 
 ## Installer
-Download the installer .exe file from the releases and install it using the setup wizard. Make sure to note the installation path so you can adjust the settings and sensors later.
+Die Installer .exe-Datei von den Releases herunterladen, und über den Setup-Assistenten installieren. Hier sollte sich der Installationspfad gemerkt werden, um später die Einstellungen und Sensoren anpassen zu können.
 
-# Usage
+# Verwendung
 
-This small user interface allows you to import Microsoft Excel files containing temperature sensor measurement data. These files are combined into a single large CSV file containing all the data. The files must contain three columns: one for the temperature, one for the timestamp, and one index column. Column names and other settings can be configured in the file [settings.toml](./settings.toml). The sensor data files must include the sensor name; the search pattern can also be customized in this file using a regular expression. When importing the sensor data, [sensors.toml](./sensors.toml) is used to match the names. Therefore, all sensors to be imported should be defined here along with their corresponding location. This location is then added to the data in the output file.
+Mit dieser kleinen Benutzeroberfläche können Microsoft Excel Dateien eingelesen werden, die Messdaten eines Temperatursensors enthalten. Diese werden zu einer großen csv-Datei kombiniert, die alle Daten enthält. Dabei müssen die Dateien drei Spalten enthalten; eine für die Temperatur, eine für den Zeitstempel und eine Index-Spalte. Die Namen der Spalten sowie sonstige Einstellungen können in der Datei [settings.toml](./settings.toml) erfolgen. Die Dateien mit den Sensordaten müssen den Sensornamen enthalten, das Suchmuster kann in Form eines regex-Ausdrucks ebenfalls in dieser Datei angepasst werden. Beim Einlesen der Sensordaten wird [sensors.toml](./sensors.toml) zum Abgleich der Namen verwendet, hier sollten also alle Sensoren die eingelesen werden sollen mit ihrem dazugehörigen Standort definiert sein. Dieser wird in der Ausgabedatei zu den Daten hinzugefügt.
 
-# Attributions
+# Referenzen / Quellen
 
-Application icon: \
+Icon der Anwendung: \
 [Thermometer icons created by apien - Flaticon](https://www.flaticon.com/free-icons/thermometer)
 
 # Screenshots
 
-<figure>
-  <img src="doc/img/screen_1.png" alt="Screenshot of the application">
-  <figcaption>Screenshot of the application</figcaption>
-</figure>
+Bild der Benutzeroberfläche
+![Bild der Benutzeroberfläche](doc/img/screen_1.png)
 
-<figure>
-  <img src="doc/img/screen_2.png" alt="Screenshot of the Power BI visualization">
-  <figcaption>Screenshot of the Power BI visualization</figcaption>
-</figure>
+Bild der visualisierten Daten in Power BI
+![Bild der visualisierten Daten in Power BI](doc/img/screen_2.png)
