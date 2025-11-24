@@ -1,0 +1,162 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Bitte nehmen Sie Einstellungen vor und drücken Sie 'Anwenden'."
+msgstr "Please adjust your settings and click 'Apply'."
+
+msgid "CSV Editor für Temperatursensoren"
+msgstr "CSV Editor for Temperature Sensors"
+
+msgid "icon.ico konnte nicht gefunden werden:"
+msgstr "icon.ico not found:"
+
+msgid "verwende icon.png"
+msgstr "using icon.png"
+
+msgid "icon.png konnte nicht gefunden werden, fahre ohne icon fort"
+msgstr "icon.png not found, proceeding without icon"
+
+msgid "Dateien zusammenfügen"
+msgstr "Concatenate files"
+
+msgid "Bestehende Bibliothek (optional):"
+msgstr "Existing library (optional):"
+
+msgid "Durchsuchen"
+msgstr "Search"
+
+msgid "Neue Dateien:"
+msgstr "New files:"
+
+msgid "Hinzufügen"
+msgstr "Add"
+
+msgid "Entfernen"
+msgstr "Remove"
+
+msgid "Daten sortieren (optional)"
+msgstr "Sort data (optional)"
+
+msgid "Doppelte Daten entfernen (optional)"
+msgstr "Eliminate duplicate data (optional)"
+
+msgid "Anwenden"
+msgstr "Apply"
+
+msgid "Dateien"
+msgstr "Files"
+
+msgid "Datei(en) hinzugefügt. Insgesamt:"
+msgstr "file(s) added. Total:"
+
+msgid "Keine Datei zum Entfernen ausgewählt."
+msgstr "No file for removal selected."
+
+msgid "Datei(en) entfernt. Übrig:"
+msgstr "file(s) removed. Remaining:"
+
+msgid "Fehler"
+msgstr "Error"
+
+msgid "Keine Dateien ausgewählt. Bitte wählen Sie Dateien zum Bearbeiten aus."
+msgstr "No files selected. Please select files to work with."
+
+msgid "Keine neuen Dateien"
+msgstr "No new files"
+
+msgid "Die Einstellungen werden auf die gewählte Bibliothek angewendet."
+msgstr "The settings will be applied to the selected library."
+
+msgid "Speichern abgebrochen."
+msgstr "Save operation cancelled."
+
+msgid "Die Datei wird gespeichert unter:"
+msgstr "The file will be saved as:"
+
+msgid "Datei nicht existent"
+msgstr "File doesn't exist"
+
+msgid "Bitte wählen Sie eine existierende Datei."
+msgstr "Please select an existing file."
+
+msgid "Fahre ohne bestehende Bibliothek fort"
+msgstr "Proceed without existing library."
+
+msgid "ist keine gültige Datei. Bitte wählen Sie eine existierende, gültige Bibliothek."
+msgstr "is not a valid file. Please select an existing, valid library."
+
+msgid "Starte Prozess."
+msgstr "Starting process."
+
+msgid "Prozess erfolgreich beendet."
+msgstr "Process finished successfully."
+
+msgid "Während dem Prozess ist ein Fehler aufgetreten."
+msgstr "An error occurred during the process."
+
+msgid "Lesen starten:"
+msgstr "Start reading:"
+
+msgid "letzter Eintrag:"
+msgstr "last entry:"
+
+msgid "Es ist ein Fehler aufgetreten:"
+msgstr "An error occurred:"
+
+msgid "Prozess gestartet"
+msgstr "Process started"
+
+msgid "Datei(en) gefunden"
+msgstr "file(s) found"
+
+msgid "Fehler beim Lesen von"
+msgstr "Error reading"
+
+msgid "Stellen Sie sicher, dass alle Dateien der neuen Sensordaten beginnen mit"
+msgstr "Please make sure that all files with new sensor data start with"
+
+msgid "Versuche Sensor"
+msgstr "Trying to read sensor"
+
+msgid "zu lesen der nicht in sensors.toml definiert wurde. Bitte fügen Sie den neuen Sensor hinzu."
+msgstr "which is not defined in sensors.toml. Please add the sensor."
+
+msgid "Lese Daten für Sensor"
+msgstr "Reading data for sensor"
+
+msgid "Nicht bekannte Spalte in Daten gefunden:"
+msgstr "Unknown column found:"
+
+msgid "Kombiniere"
+msgstr "Combining"
+
+msgid "Fertig. Speichern"
+msgstr "Done. Saving"
+
+msgid "Lese existierende Bibliothek"
+msgstr "Reading existing library"
+
+msgid "Fertig"
+msgstr "Done"
+
+msgid "neue Dateien"
+msgstr "new files"
+
+msgid "Eliminiere Duplikate"
+msgstr "Removing duplicates"
+
+msgid "Sortiere"
+msgstr "Sorting"
+
+msgid "Speichern"
+msgstr "Saving"
+
+msgid "Verarbeitung fertig. Dauer"
+msgstr "Processing done. Duration"
+
+msgid "Sensor(en) in der Datei gefunden"
+msgstr "sensor(s) found in file"
+
+msgid "Datei ausgewählt"
+msgstr "File selected"

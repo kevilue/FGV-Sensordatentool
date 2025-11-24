@@ -1,0 +1,162 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Bitte nehmen Sie Einstellungen vor und drücken Sie 'Anwenden'."
+msgstr ""
+
+msgid "CSV Editor für Temperatursensoren"
+msgstr ""
+
+msgid "icon.ico konnte nicht gefunden werden:"
+msgstr ""
+
+msgid "Verwende icon.png"
+msgstr ""
+
+msgid "icon.png konnte nicht gefunden werden, fahre ohne icon fort"
+msgstr ""
+
+msgid "Dateien zusammenfügen"
+msgstr ""
+
+msgid "Bestehende Bibliothek (optional):"
+msgstr ""
+
+msgid "Durchsuchen"
+msgstr ""
+
+msgid "Neue Dateien:"
+msgstr ""
+
+msgid "Hinzufügen"
+msgstr ""
+
+msgid "Entfernen"
+msgstr ""
+
+msgid "Daten sortieren (optional)"
+msgstr ""
+
+msgid "Doppelte Daten entfernen (optional)"
+msgstr ""
+
+msgid "Anwenden"
+msgstr ""
+
+msgid "Dateien"
+msgstr ""
+
+msgid "Datei(en) hinzugefügt. Insgesamt:"
+msgstr ""
+
+msgid "Keine Datei zum Entfernen ausgewählt."
+msgstr ""
+
+msgid "Datei(en) entfernt. Übrig:"
+msgstr ""
+
+msgid "Fehler"
+msgstr ""
+
+msgid "Keine Dateien ausgewählt. Bitte wählen Sie Dateien zum Bearbeiten aus."
+msgstr ""
+
+msgid "Keine neuen Dateien"
+msgstr ""
+
+msgid "Die Einstellungen werden auf die gewählte Bibliothek angewendet."
+msgstr ""
+
+msgid "Speichern abgebrochen."
+msgstr ""
+
+msgid "Die Datei wird gespeichert unter:"
+msgstr ""
+
+msgid "Datei nicht existent"
+msgstr ""
+
+msgid "Bitte wählen Sie eine existierende Datei."
+msgstr ""
+
+msgid "Fahre ohne bestehende Bibliothek fort"
+msgstr ""
+
+msgid "ist keine gültige Datei. Bitte wählen Sie eine existierende, gültige Bibliothek."
+msgstr ""
+
+msgid "Starte Prozess."
+msgstr ""
+
+msgid "Prozess erfolgreich beendet."
+msgstr ""
+
+msgid "Während dem Prozess ist ein Fehler aufgetreten."
+msgstr ""
+
+msgid "Lesen starten:"
+msgstr ""
+
+msgid "letzter Eintrag:"
+msgstr ""
+
+msgid "Es ist ein Fehler aufgetreten:"
+msgstr ""
+
+msgid "Prozess gestartet"
+msgstr ""
+
+msgid "Datei(en) gefunden"
+msgstr ""
+
+msgid "Fehler beim Lesen von"
+msgstr ""
+
+msgid "Stellen Sie sicher, dass alle Dateien der neuen Sensordaten beginnen mit"
+msgstr ""
+
+msgid "Versuche Sensor"
+msgstr ""
+
+msgid "zu lesen der nicht in sensors.toml definiert wurde. Bitte fügen Sie den neuen Sensor hinzu."
+msgstr ""
+
+msgid "Lese Daten für Sensor"
+msgstr ""
+
+msgid "Nicht bekannte Spalte in Daten gefunden:"
+msgstr ""
+
+msgid "Kombiniere"
+msgstr ""
+
+msgid "Fertig. Speichern"
+msgstr ""
+
+msgid "Lese existierende Bibliothek"
+msgstr ""
+
+msgid "Fertig"
+msgstr ""
+
+msgid "neue Dateien"
+msgstr ""
+
+msgid "Eliminiere Duplikate"
+msgstr ""
+
+msgid "Sortiere"
+msgstr ""
+
+msgid "Speichern"
+msgstr ""
+
+msgid "Verarbeitung fertig. Dauer"
+msgstr ""
+
+msgid "Sensor(en) in der Datei gefunden"
+msgstr ""
+
+msgid "Datei ausgewählt"
+msgstr ""

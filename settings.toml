@@ -7,10 +7,14 @@ temperature_column = "Temperature"
 sensor_filename_pattern = "FGV_*.xlsx"
 sensor_name_pattern = 'FGV_\d+'
 
+# Language of the application
+# Available: de, en
+[language]
+lang = "en"
+
 # Format of the timestamp in the csv data
 [formats]
 time_format = "%Y-%m-%d %H:%M:%S" # see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
-
 
 # Sorting settings
 [sorting]

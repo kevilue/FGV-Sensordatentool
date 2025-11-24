@@ -1,6 +1,7 @@
 import tomllib
 import os
 import sys
+import gettext
 
 class AppConfig:
     __config = dict()
@@ -18,6 +19,12 @@ class AppConfig:
                 self.__sensors = tomllib.load(f)
         except Exception as e:
             print("Error loading config file:", e)
+
+        try: lang = gettext.translation("base", localedir=self.get_resource_path("locales"), languages=[self.language], fallback=True)
+        except Exception as e: 
+            print("Error getting translations:",e)
+            pass
+        lang.install()
 
 
     @property
@@ -77,6 +84,13 @@ class AppConfig:
             return self.__config["names"]["sensor_name_pattern"]
         else: 
             return r"FGV_\d+"
+        
+    @property
+    def language(self) -> str:
+        if self.__config["language"]["lang"]:
+            return self.__config["language"]["lang"]
+        else: 
+            return "en"
 
     def get_resource_path(self, relative_path) -> str:
         """ Get resource path for pyinstaller. """
