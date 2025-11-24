@@ -30,8 +30,12 @@ Application icon: \
 
 # Screenshots
 
-![Screenshot of the application](doc/img/screen_1.png) 
-Screenshot of the application
+<figure>
+  <img src="doc/img/screen_1.png" alt="Screenshot of the application">
+  <figcaption>Screenshot of the application</figcaption>
+</figure>
 
-![Screenshot of the Power BI visualization](doc/img/screen_2.png)
-Screenshot of the Power BI visualization
+<figure>
+  <img src="doc/img/screen_2.png" alt="Screenshot of the Power BI visualization">
+  <figcaption>Screenshot of the Power BI visualization</figcaption>
+</figure>

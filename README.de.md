@@ -29,8 +29,12 @@ Icon der Anwendung: \
 
 # Screenshots
 
-![Bild der Benutzeroberfläche](doc/img/screen_1.png) \
-Bild der Benutzeroberfläche
+<figure>
+  <img src="doc/img/screen_1.png" alt="Bild der Benutzeroberfläche">
+  <figcaption>Bild der Benutzeroberfläche</figcaption>
+</figure>
 
-![Bild der visualisierten Daten in Power BI](doc/img/screen_2.png) \
-Bild der visualisierten Daten in Power BI
+<figure>
+  <img src="doc/img/screen_2.png" alt="Bild der visualisierten Daten in Power BI">
+  <figcaption>Bild der visualisierten Daten in Power BI</figcaption>
+</figure>
