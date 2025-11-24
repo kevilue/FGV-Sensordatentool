@@ -13,14 +13,6 @@ class MainApp(tk.Tk):
 
         self.conf = config
 
-        # Initialize language
-        # try: lang = gettext.translation("base", localedir="locales", languages=["en"], fallback=True)
-        # except Exception as e: 
-        #     print("Error getting translations:",e)
-        #     pass
-        # lang.install()
-        # _ = gettext.gettext
-
         self.title(_("CSV Editor für Temperatursensoren"))
         self.geometry("700x550")
         try:
