@@ -26,3 +26,11 @@ Mit dieser kleinen Benutzeroberfläche können Microsoft Excel Dateien eingelese
 
 Icon der Anwendung: \
 [Thermometer icons created by apien - Flaticon](https://www.flaticon.com/free-icons/thermometer)
+
+# Screenshots
+
+![Bild der Benutzeroberfläche](doc/img/screen_1.png) \
+Bild der Benutzeroberfläche
+
+![Bild der visualisierten Daten in Power BI](doc/img/screen_2.png) \
+Bild der visualisierten Daten in Power BI

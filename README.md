@@ -27,3 +27,11 @@ This small user interface allows you to import Microsoft Excel files containing 
 
 Application icon: \
 [Thermometer icons created by apien - Flaticon](https://www.flaticon.com/free-icons/thermometer)
+
+# Screenshots
+
+![Screenshot of the application](doc/img/screen_1.png) 
+Screenshot of the application
+
+![Screenshot of the Power BI visualization](doc/img/screen_2.png)
+Screenshot of the Power BI visualization
