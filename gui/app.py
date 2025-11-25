@@ -75,14 +75,22 @@ class MainApp(tk.Tk):
         ttk.Button(button_list_frame, text=_("Hinzufügen"), command=self.add_files).grid(row=0, column=0, sticky="ew", pady=2)
         ttk.Button(button_list_frame, text=_("Entfernen"), command=self.remove_selected_files).grid(row=1, column=0, sticky="ew", pady=2)
 
+        # Settings
+        settings_frame = ttk.Frame(options_frame)
+        settings_frame.grid(row=2, column=0, columnspan=3,  sticky="nw", padx=5, pady=5)
+
         # Checkbox for sorting
         self.sort_active = tk.BooleanVar(value=False)
-        self.sort_active_box = tk.Checkbutton(options_frame, text=_("Daten sortieren (optional)"), variable=self.sort_active, onvalue=True, offvalue=False)
-        self.sort_active_box.grid(row=4, column=0, columnspan=3, sticky="w", padx=5, pady=2)
+        self.sort_active_box = tk.Checkbutton(settings_frame, text=_("Daten sortieren"), variable=self.sort_active, onvalue=True, offvalue=False)
+        self.sort_active_box.grid(row=0, column=0, columnspan=1, sticky="w", padx=5, pady=2)
         # Checkbox for deleting duplicate rows
         self.rm_duplicates_active = tk.BooleanVar(value=True)
-        self.rm_duplicates_active_box = tk.Checkbutton(options_frame, text=_("Doppelte Daten entfernen (optional)"), variable=self.rm_duplicates_active, onvalue=True, offvalue=False)
-        self.rm_duplicates_active_box.grid(row=5, column=0, columnspan=3, sticky="w", padx=5, pady=2)
+        self.rm_duplicates_active_box = tk.Checkbutton(settings_frame, text=_("Doppelte Daten entfernen"), variable=self.rm_duplicates_active, onvalue=True, offvalue=False)
+        self.rm_duplicates_active_box.grid(row=1, column=0, columnspan=1, sticky="w", padx=5, pady=2)
+        # Checkbox for rounding
+        self.round_active = tk.BooleanVar(value=True)
+        self.round_active_box = tk.Checkbutton(settings_frame, text=_("Sensorwerte Runden"), variable=self.round_active, onvalue=True, offvalue=False)
+        self.round_active_box.grid(row=0, column=1, columnspan=1, sticky="w", padx=5, pady=2)
 
         # Info log
         info_frame = ttk.LabelFrame(main_frame, text="Info Log", padding="10")

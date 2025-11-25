@@ -35,11 +35,14 @@ msgstr "Add"
 msgid "Entfernen"
 msgstr "Remove"
 
-msgid "Daten sortieren (optional)"
-msgstr "Sort data (optional)"
+msgid "Daten sortieren"
+msgstr "Sort data"
 
-msgid "Doppelte Daten entfernen (optional)"
-msgstr "Eliminate duplicate data (optional)"
+msgid "Doppelte Daten entfernen"
+msgstr "Eliminate duplicate data"
+
+msgid "Sensorwerte Runden"
+msgstr "Round sensor values"
 
 msgid "Anwenden"
 msgstr "Apply"

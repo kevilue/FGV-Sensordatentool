@@ -15,6 +15,7 @@ lang = "en"
 # Format of the timestamp in the csv data
 [formats]
 time_format = "%Y-%m-%d %H:%M:%S" # see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+decimal_points = 2
 
 # Sorting settings
 [sorting]

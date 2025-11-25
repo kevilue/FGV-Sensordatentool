@@ -91,6 +91,13 @@ class AppConfig:
             return self.__config["language"]["lang"]
         else: 
             return "en"
+        
+    @property
+    def decimal_points(self) -> int:
+        if self.__config["formats"]["decimal_points"]:
+            return self.__config["formats"]["decimal_points"]
+        else:
+            return 2
 
     def get_resource_path(self, relative_path) -> str:
         """ Get resource path for pyinstaller. """

@@ -23,7 +23,8 @@ class DataHandler:
             path_to_files: str | list[str], 
             save_path=None,
             sort=True,
-            drop_duplicates=False
+            drop_duplicates=False,
+            round_temperatures=True
             ) -> None | pd.DataFrame :
         """Concatenate all given csv files collected from sensors into new ones."""
         if type(path_to_files) is list: 
@@ -78,6 +79,9 @@ class DataHandler:
         all_sensors_chunks = pd.concat(all_sensors_chunks)
 
         if save_path is not None:
+            if round_temperatures: 
+                self.log(_("Sensorwerte Runden")+"...")
+                all_sensors_chunks["Temperatur"] = all_sensors_chunks["Temperatur"].round(self.__config.decimal_points)
             self.log(f"{_("Fertig. Speichern")}...")
             with open(save_path, "w") as f:
                 all_sensors_chunks.to_csv(f, index=False)
@@ -90,7 +94,8 @@ class DataHandler:
             save_path: str, 
             old_file=None,
             sort=True,
-            drop_duplicates=True
+            drop_duplicates=True,
+            round_temperatures=True
             ):
         """Concatenate an existing file (old_file, optional) with new ones and save under save_path."""
         stime = time.perf_counter()
@@ -111,12 +116,21 @@ class DataHandler:
                 base["Datum"] = pd.to_datetime(base["Datum"], format=self.__config.time_format)
                 base_sorted = base.sort_values(by=["Sensor", "Datum"], ascending=[True, self.__config.sort_ascending_active])
                 base = base_sorted
+            if round_temperatures:
+                self.log(_("Sensorwerte Runden")+"...")
+                base["Temperatur"] = base["Temperatur"].round(self.__config.decimal_points)
             self.log(f"{_("Fertig")} ({time.perf_counter()-stime:.2f}s). {_("Speichern")}...")
             with open(save_path, "w") as f:
                 base.to_csv(f, index=False)
         else: 
             self.log(_("Kombiniere")+" "+_("Dateien")+"...")
-            self.concat_sensor_files(path_to_files=path_to_files, save_path=save_path, sort=sort, drop_duplicates=drop_duplicates)
+            self.concat_sensor_files(
+                path_to_files=path_to_files, 
+                save_path=save_path, 
+                sort=sort, 
+                drop_duplicates=drop_duplicates, 
+                round_temperatures=round_temperatures
+                )
 
         self.log(f"{_("Verarbeitung fertig. Dauer")}: {time.perf_counter()-stime:.2f}s")
         self.log("CONCAT_COMPLETED")
