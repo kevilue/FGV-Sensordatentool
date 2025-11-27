@@ -20,7 +20,7 @@ msgstr ""
 msgid "Dateien zusammenfügen"
 msgstr ""
 
-msgid "Bestehende Bibliothek (optional):"
+msgid "Bestehende Datensammlung (optional):"
 msgstr ""
 
 msgid "Durchsuchen"

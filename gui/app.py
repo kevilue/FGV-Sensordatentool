@@ -46,7 +46,7 @@ class MainApp(tk.Tk):
         options_frame.grid_columnconfigure(1, weight=1) # Make entry widgets expand 
 
         # Base file path
-        ttk.Label(options_frame, text=_("Bestehende Bibliothek (optional):")).grid(row=0, column=0, sticky="w", padx=5, pady=5)
+        ttk.Label(options_frame, text=_("Bestehende Datensammlung (optional):")).grid(row=0, column=0, sticky="w", padx=5, pady=5)
         self.file_path_var = tk.StringVar()
         folder_entry = ttk.Entry(options_frame, textvariable=self.file_path_var)
         folder_entry.grid(row=0, column=1, sticky="ew", padx=5, pady=5)

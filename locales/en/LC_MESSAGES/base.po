@@ -20,8 +20,8 @@ msgstr "icon.png not found, proceeding without icon"
 msgid "Dateien zusammenfügen"
 msgstr "Concatenate files"
 
-msgid "Bestehende Bibliothek (optional):"
-msgstr "Existing library (optional):"
+msgid "Bestehende Datensammlung (optional):"
+msgstr "Existing data library (optional):"
 
 msgid "Durchsuchen"
 msgstr "Search"
