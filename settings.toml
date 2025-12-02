@@ -1,20 +1,24 @@
+# Various namings used by the application
+[names]
 # Names of columns in the csv files.
 # These only have to be present in the column name, not match it exactly.
-[names]
 timestamp_column = "Date-Time" # This column will be used for sorting
 index_column = "#"
 temperature_column = "Temperature"
-sensor_filename_pattern = "FGV_*.xlsx"
-sensor_name_pattern = 'FGV_\d+'
+sensor_filename_pattern = "FGV_*.xlsx" # For searching folders for files automatically - currently unused
+sensor_name_pattern = 'FGV_\d+' # see https://docs.python.org/3/howto/regex.html#regex-howto
 
 # Language of the application
 # Available: de, en
 [language]
 lang = "en"
 
-# Format of the timestamp in the csv data
+# Formats used by the application
 [formats]
-time_format = "%Y-%m-%d %H:%M:%S" # see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+# Format of the timestamp in the csv data
+# see https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes
+time_format = "%Y-%m-%d %H:%M:%S"
+decimal_points = 2 # Number of decimal points for rounding sensor data
 
 # Sorting settings
 [sorting]

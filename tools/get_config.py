@@ -22,7 +22,7 @@ class AppConfig:
 
         try: lang = gettext.translation("base", localedir=self.get_resource_path("locales"), languages=[self.language], fallback=True)
         except Exception as e: 
-            print("Error getting translations:",e)
+            print(f"Error getting translations for {self.language}:",e)
             pass
         lang.install()
 
@@ -38,59 +38,45 @@ class AppConfig:
 
     @property
     def timestamp(self) -> str:
-        if self.__config["names"]["timestamp_column"]:
-            return self.__config["names"]["timestamp_column"]
-        else:
-            return "timestamp"
+        return self.__config.get("names",{}).get("timestamp_column", "timestamp")
         
     @property
     def index(self) -> str:
-        if self.__config["names"]["index_column"]:
-            return self.__config["names"]["index_column"]
-        else:
-            return "index"
+        return self.__config.get("names",{}).get("index_column", "index")
         
     @property
     def temperature(self) -> str:
-        if self.__config["names"]["temperature_column"]:
-            return self.__config["names"]["temperature_column"]
-        else:
-            return "temperature"
+        return self.__config.get("names",{}).get("temperature_column", "temperature")
         
     @property
     def time_format(self) -> str:
-        if self.__config["formats"]["time_format"]:
-            return self.__config["formats"]["time_format"]
-        else:
-            return "%Y-%m-%d %H:%M:%S"
+        return self.__config.get("formats",{}).get("time_format", "%Y-%m-%d %H:%M:%S")
         
     @property
     def sort_ascending_active(self) -> bool:
-        if self.__config["sorting"]["order"]:
-            if self.__config["sorting"]["order"] == "ascending": return True
-            else: return False
-        return False
+        order = self.__config.get("sorting",{}).get("order")
+        if order == "ascending":
+            return True
+        elif order == "descending": 
+            return False
+        else:
+            return False
     
     @property
     def file_search_pattern(self) -> str:
-        if self.__config["names"]["sensor_filename_pattern"]:
-            return self.__config["names"]["sensor_filename_pattern"]
-        else: 
-            return "FGV_*.xlsx"
+        return self.__config.get("names",{}).get("sensor_filename_pattern", "FGV_*.xlsx")
     
     @property
     def sensor_name_pattern(self) -> str:
-        if self.__config["names"]["sensor_name_pattern"]:
-            return self.__config["names"]["sensor_name_pattern"]
-        else: 
-            return r"FGV_\d+"
+        return self.__config.get("names",{}).get("sensor_name_pattern", r"FGV_\d+")
         
     @property
     def language(self) -> str:
-        if self.__config["language"]["lang"]:
-            return self.__config["language"]["lang"]
-        else: 
-            return "en"
+        return self.__config.get("language",{}).get("lang", "en")
+        
+    @property
+    def decimal_points(self) -> int:
+        return self.__config.get("formats",{}).get("decimal_points", 2)
 
     def get_resource_path(self, relative_path) -> str:
         """ Get resource path for pyinstaller. """

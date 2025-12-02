@@ -20,7 +20,7 @@ msgstr ""
 msgid "Dateien zusammenfügen"
 msgstr ""
 
-msgid "Bestehende Bibliothek (optional):"
+msgid "Bestehende Datensammlung (optional):"
 msgstr ""
 
 msgid "Durchsuchen"
@@ -35,10 +35,13 @@ msgstr ""
 msgid "Entfernen"
 msgstr ""
 
-msgid "Daten sortieren (optional)"
+msgid "Daten sortieren"
 msgstr ""
 
-msgid "Doppelte Daten entfernen (optional)"
+msgid "Doppelte Daten entfernen"
+msgstr ""
+
+msgid "Sensorwerte Runden"
 msgstr ""
 
 msgid "Anwenden"
