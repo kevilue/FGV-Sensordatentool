@@ -1,10 +1,11 @@
+# Various namings used by the application
+[names]
 # Names of columns in the csv files.
 # These only have to be present in the column name, not match it exactly.
-[names]
 timestamp_column = "Date-Time" # This column will be used for sorting
 index_column = "#"
 temperature_column = "Temperature"
-sensor_filename_pattern = "FGV_*.xlsx" # currently unused
+sensor_filename_pattern = "FGV_*.xlsx" # For searching folders for files automatically - currently unused
 sensor_name_pattern = 'FGV_\d+' # see https://docs.python.org/3/howto/regex.html#regex-howto
 
 # Language of the application
